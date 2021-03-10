@@ -1,0 +1,9 @@
+export type databaseType = 'mysql' | 'mariadb';
+export type HttpLogType = 'exception';
+export type RiskType = 'item' | 'summary';
+export type CompanyGroupType = 'company' | 'group';
+export type AssessmentRate = 0 | 1 | 2 | 3 | 4 | 5;
+export type AssessmentType = 'gross' | 'net';
+export type HeatMapIndicatorType = 'L' | 'M' | 'H';
+export type ReviewStatus = 'approved' | 'rejected' | 'waiting';
+export type CognitoUserRoleType = 'admin' | 'user';
