@@ -1,12 +1,10 @@
 import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { HttpArgumentsHost } from '@nestjs/common/interfaces';
 import { Request, Response } from 'express';
-import { HttpLogTypeEnum, INTERNAL_SERVER_ERROR_MSG, VALIDATION_FAILED } from 'src/constants';
-import { HttpLogsService } from 'src/modules/http-logs/http-logs.service';
+import { INTERNAL_SERVER_ERROR_MSG } from 'src/constants';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
-  constructor(private readonly httpLogsService: HttpLogsService) {}
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   public async catch(exception: any, host: ArgumentsHost): Promise<void> {
@@ -51,21 +49,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
       body: request.body,
       exception: !internalServerError ? exception : exception.stack,
     });
-
-    if (status !== HttpStatus.BAD_REQUEST && message !== VALIDATION_FAILED) {
-      // store error log to database
-      try {
-        await this.httpLogsService.create({
-          type: HttpLogTypeEnum.exception,
-          httpStatusCode: status,
-          url: request.originalUrl,
-          requestData: JSON.stringify(request.body),
-          description: message,
-        });
-      } catch (error) {
-        console.error(error);
-      }
-    }
 
     if (process.env.NODE_ENV !== 'development') {
       message = INTERNAL_SERVER_ERROR_MSG;
